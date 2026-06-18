@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Atlas de RPG</title>
+  <style>
+    :root {
+      --bg: #17211f;
+      --ink: #222522;
+      --muted: #766950;
+      --paper: #f5ecd4;
+      --paper-2: #fff8e8;
+      --line: rgba(70, 49, 28, 0.22);
+      --teal: #2d6f75;
+      --red: #9d3f35;
+      --gold: #bb8427;
+      --violet: #5c4b91;
+      --black: #292929;
+      --shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(310px, 360px) 1fr;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    .panel {
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 16px;
+      overflow-y: auto;
+      background: rgba(245, 236, 212, 0.96);
+      border-right: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .handle {
+      display: none;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .crest {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 2px solid #4c3120;
+      border-radius: 8px;
+      background: #d0ab68;
+      color: #4a241d;
+      font-size: 23px;
+      font-weight: 900;
+      box-shadow: inset 0 0 0 3px rgba(255, 246, 212, 0.45);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 21px;
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .icon-btn,
+    .btn,
+    .file-btn,
+    .mini-btn {
+      border: 1px solid rgba(69, 48, 29, 0.28);
+      border-radius: 8px;
+      background: var(--paper-2);
+      color: #282621;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      height: 44px;
+      font-size: 19px;
+    }
+
+    .icon-btn.active,
+    .btn.primary {
+      background: var(--teal);
+      color: white;
+      border-color: transparent;
+    }
+
+    .btn.warn {
+      background: var(--red);
+      color: white;
+      border-color: transparent;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 10px 12px;
+    }
+
+    .file-btn {
+      display: grid;
+      place-items: center;
+      min-height: 44px;
+      text-align: center;
+    }
+
+    .file-btn input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    section {
+      display: grid;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(82, 55, 31, 0.16);
+    }
+
+    section:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    h2 {
+      color: #665138;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      color: #5b4b36;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid rgba(77, 53, 31, 0.28);
+      border-radius: 8px;
+      padding: 10px;
+      outline: none;
+      background: #fffaf0;
+      color: var(--ink);
+    }
+
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .layers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 9px;
+      border: 1px solid rgba(77, 53, 31, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 250, 240, 0.74);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .toggle input {
+      width: 18px;
+      min-height: 18px;
+      padding: 0;
+      accent-color: var(--teal);
+    }
+
+    .status {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .map-list,
+    .place-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .place-item,
+    .save-item {
+      display: grid;
+      align-items: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 8px;
+      border: 1px solid rgba(77, 53, 31, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 250, 240, 0.74);
+    }
+
+    .place-item {
+      grid-template-columns: auto 1fr auto;
+      cursor: pointer;
+    }
+
+    .save-item {
+      grid-template-columns: 1fr auto auto auto;
+    }
+
+    .save-item.active {
+      border-color: rgba(45, 111, 117, 0.6);
+      background: rgba(224, 246, 244, 0.9);
+    }
+
+    .swatch {
+      width: 17px;
+      height: 17px;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(30, 20, 10, 0.28);
+    }
+
+    .item-title {
+      overflow: hidden;
+      font-size: 14px;
+      font-weight: 850;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mini-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+    }
+
+    .mini-btn.danger {
+      color: var(--red);
+    }
+
+    .stage-shell {
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 40%, #34423c 0, var(--bg) 68%);
+    }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .stage.adding {
+      cursor: crosshair;
+    }
+
+    .stage.dragging {
+      cursor: grabbing;
+    }
+
+    .map {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1400px;
+      height: 980px;
+      transform-origin: 0 0;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, 0.36));
+      user-select: none;
+    }
+
+    .marker-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .marker {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 3px solid white;
+      border-radius: 50% 50% 50% 7px;
+      transform: translate(-50%, -100%) rotate(-45deg);
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .marker span {
+      transform: rotate(45deg);
+      color: white;
+      font-size: 15px;
+      font-weight: 900;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .marker.selected {
+      outline: 3px solid rgba(255, 241, 160, 0.95);
+      outline-offset: 4px;
+    }
+
+    .hud {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+      pointer-events: none;
+    }
+
+    .legend,
+    .note {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 8px;
+      background: rgba(25, 31, 29, 0.86);
+      color: #fff7de;
+      box-shadow: var(--shadow);
+      pointer-events: auto;
+      backdrop-filter: blur(8px);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 560px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.72);
+      border-radius: 50%;
+    }
+
+    .note {
+      display: none;
+      width: min(360px, calc(100vw - 36px));
+      padding: 14px;
+    }
+
+    .note.open {
+      display: grid;
+      gap: 9px;
+    }
+
+    .note-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .note h3 {
+      font-size: 18px;
+      line-height: 1.15;
+    }
+
+    .note p {
+      color: #eadfc2;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .close-note {
+      min-width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      cursor: pointer;
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        display: block;
+      }
+
+      .panel {
+        position: fixed;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        z-index: 10;
+        max-height: min(80vh, 640px);
+        padding: 8px 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        transform: translateY(calc(100% - 112px));
+        transition: transform 180ms ease;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      body.panel-open .panel {
+        transform: translateY(0);
+      }
+
+      .handle {
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 24px;
+        margin: -2px auto 0;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(46, 37, 28, 0.14);
+        color: #4d3a28;
+        cursor: pointer;
+      }
+
+      .handle::before {
+        content: "";
+        width: 34px;
+        height: 4px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+
+      .brand {
+        grid-template-columns: 38px 1fr;
+        gap: 10px;
+        padding-bottom: 8px;
+      }
+
+      .crest {
+        width: 38px;
+        height: 38px;
+        font-size: 21px;
+      }
+
+      h1 {
+        font-size: 18px;
+      }
+
+      .subtitle {
+        display: none;
+      }
+
+      .tool-grid {
+        position: sticky;
+        top: -8px;
+        z-index: 2;
+        padding: 7px 0;
+        background: rgba(245, 236, 212, 0.98);
+      }
+
+      .icon-btn,
+      .btn,
+      .file-btn {
+        min-height: 48px;
+      }
+
+      input,
+      textarea,
+      select {
+        min-height: 46px;
+        font-size: 16px;
+      }
+
+      .layers,
+      .two {
+        grid-template-columns: 1fr;
+      }
+
+      .toggle {
+        min-height: 44px;
+      }
+
+      .stage-shell {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+      }
+
+      .map {
+        width: 1120px;
+        height: 784px;
+      }
+
+      .marker {
+        width: 42px;
+        height: 42px;
+      }
+
+      .hud {
+        left: 8px;
+        right: 8px;
+        bottom: 122px;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .legend {
+        flex-wrap: nowrap;
+        max-width: none;
+        overflow-x: auto;
+        padding: 9px 10px;
+        font-size: 12px;
+      }
+
+      .note {
+        width: 100%;
+        max-height: 34vh;
+        overflow-y: auto;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <button class="handle" id="panelToggle" title="Abrir painel" aria-label="Abrir painel"></button>
+
+      <div class="brand">
+        <div class="crest">R</div>
+        <div>
+          <h1>Atlas de RPG</h1>
+          <p class="subtitle">Mapas, locais e notas para a sua campanha.</p>
+        </div>
+      </div>
+
+      <div class="tool-grid" aria-label="Ferramentas do mapa">
+        <button class="icon-btn active" id="moveMode" title="Mover mapa">✥</button>
+        <button class="icon-btn" id="addMode" title="Adicionar local">＋</button>
+        <button class="icon-btn" id="zoomIn" title="Aproximar">⌕</button>
+        <button class="icon-btn" id="zoomOut" title="Afastar">−</button>
+      </div>
+
+      <section>
+        <h2>Mapa</h2>
+        <label class="file-btn">
+          Importar imagem do mapa
+          <input id="mapImageInput" type="file" accept="image/*" />
+        </label>
+        <div class="status" id="mapImageStatus">Mapa padrão</div>
+        <div class="layers">
+          <label class="toggle"><input type="checkbox" data-layer="roads" checked /> Estradas</label>
+          <label class="toggle"><input type="checkbox" data-layer="labels" checked /> Nomes</label>
+          <label class="toggle"><input type="checkbox" data-layer="grid" checked /> Grade</label>
+          <label class="toggle"><input type="checkbox" data-layer="fog" checked /> Névoa</label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Salvar</h2>
+        <div class="field">
+          <label for="mapName">Nome do mapa</label>
+          <input id="mapName" value="Mapa de Campanha" maxlength="42" />
+        </div>
+        <div class="two">
+          <button class="btn primary" id="saveMap">Atualizar</button>
+          <button class="btn" id="saveCopy">Salvar cópia</button>
+        </div>
+        <div class="two">
+          <button class="btn" id="exportBackup">Exportar backup</button>
+          <label class="file-btn">
+            Importar backup
+            <input id="backupInput" type="file" accept="application/json,.json" />
+          </label>
+        </div>
+        <div class="status" id="saveStatus">Mapa padrão ainda não salvo.</div>
+        <div class="map-list" id="savedMapList"></div>
+        <button class="btn warn" id="newMap">Novo mapa padrão</button>
+      </section>
+
+      <section>
+        <h2>Novo Local</h2>
+        <div class="field">
+          <label for="placeName">Nome</label>
+          <input id="placeName" value="Lugar misterioso" maxlength="36" />
+        </div>
+        <div class="field">
+          <label for="placeKind">Tipo</label>
+          <select id="placeKind">
+            <option value="cidade">Cidade</option>
+            <option value="perigo">Perigo</option>
+            <option value="tesouro">Tesouro</option>
+            <option value="missao">Missão</option>
+            <option value="segredo">Segredo</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="placeNote">Nota</label>
+          <textarea id="placeNote">Algo daqui chama aventureiros, espiões e gente que devia estar dormindo.</textarea>
+        </div>
+        <button class="btn primary" id="quickAdd">Adicionar no centro</button>
+      </section>
+
+      <section>
+        <h2>Locais deste mapa</h2>
+        <div class="place-list" id="placeList"></div>
+      </section>
+    </aside>
+
+    <main class="stage-shell">
+      <div class="stage" id="stage">
+        <div class="map" id="map">
+          <svg viewBox="0 0 1400 980" role="img" aria-label="Mapa de fantasia com cidades, montanhas, florestas e rios">
+            <defs>
+              <pattern id="paperNoise" width="90" height="90" patternUnits="userSpaceOnUse">
+                <rect width="90" height="90" fill="#f1dfac"></rect>
+                <path d="M0 13 C28 21 48 3 90 15 M0 72 C32 58 52 89 90 70" stroke="#d7bd7a" stroke-width="1" opacity="0.24" fill="none"></path>
+                <circle cx="18" cy="28" r="2" fill="#b88f4f" opacity="0.2"></circle>
+                <circle cx="72" cy="50" r="1.5" fill="#795b36" opacity="0.16"></circle>
+              </pattern>
+              <pattern id="gridPattern" width="70" height="70" patternUnits="userSpaceOnUse">
+                <path d="M70 0H0V70" fill="none" stroke="#7c5e35" stroke-width="1" opacity="0.24"></path>
+              </pattern>
+              <linearGradient id="sea" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#7bb1b3"></stop>
+                <stop offset="1" stop-color="#376f8a"></stop>
+              </linearGradient>
+              <filter id="rough">
+                <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="7"></feTurbulence>
+                <feDisplacementMap in="SourceGraphic" scale="5"></feDisplacementMap>
+              </filter>
+            </defs>
+
+            <rect width="1400" height="980" fill="url(#sea)"></rect>
+            <g id="baseMap">
+              <path d="M217 153 C313 83 465 85 547 142 C635 203 740 140 824 195 C913 254 1037 237 1133 302 C1244 377 1217 525 1149 595 C1072 675 1126 816 987 874 C865 925 741 854 628 899 C502 949 344 889 301 781 C268 699 154 661 157 532 C160 420 108 235 217 153Z" fill="url(#paperNoise)" stroke="#6f4a24" stroke-width="9" filter="url(#rough)"></path>
+              <path d="M1088 182 C1130 142 1214 151 1245 204 C1274 254 1234 317 1171 317 C1113 316 1041 262 1088 182Z" fill="url(#paperNoise)" stroke="#6f4a24" stroke-width="6" opacity="0.93"></path>
+              <path d="M251 734 C305 720 359 754 367 806 C376 864 306 894 258 860 C210 827 197 758 251 734Z" fill="url(#paperNoise)" stroke="#6f4a24" stroke-width="5" opacity="0.92"></path>
+
+              <g id="layer-grid">
+                <rect x="120" y="80" width="1160" height="850" fill="url(#gridPattern)" opacity="0.8"></rect>
+              </g>
+
+              <g id="terrain">
+                <path d="M367 204 l42 -76 45 82 l40 -64 56 104" fill="none" stroke="#3e3a35" stroke-width="22" stroke-linejoin="round"></path>
+                <path d="M373 202 l36 -65 34 64 l42 -59 44 81" fill="none" stroke="#8a806d" stroke-width="10" stroke-linejoin="round"></path>
+                <path d="M872 314 l39 -70 44 82 l41 -59 50 97 l44 -70 50 103" fill="none" stroke="#3e3a35" stroke-width="20" stroke-linejoin="round"></path>
+                <path d="M879 312 l31 -57 36 67 l46 -63 40 83 l49 -58 42 88" fill="none" stroke="#8a806d" stroke-width="9" stroke-linejoin="round"></path>
+                <path d="M453 730 C498 660 562 621 648 640 C726 657 770 728 849 742" fill="none" stroke="#397a9e" stroke-width="24" stroke-linecap="round"></path>
+                <path d="M518 611 C556 579 580 522 604 468 C641 386 699 357 789 330" fill="none" stroke="#397a9e" stroke-width="18" stroke-linecap="round"></path>
+                <path d="M645 642 C639 577 632 534 604 468" fill="none" stroke="#397a9e" stroke-width="12" stroke-linecap="round" opacity="0.88"></path>
+                <g fill="#3d6a43" opacity="0.96">
+                  <path d="M263 419 l22 -45 24 45 h-13 l18 36 h-61 l19 -36z"></path>
+                  <path d="M319 401 l20 -39 22 39 h-12 l17 35 h-55 l16 -35z"></path>
+                  <path d="M362 450 l25 -48 26 48 h-15 l21 40 h-67 l21 -40z"></path>
+                  <path d="M234 492 l24 -46 25 46 h-14 l20 38 h-64 l19 -38z"></path>
+                  <path d="M744 611 l20 -39 22 39 h-12 l17 35 h-56 l17 -35z"></path>
+                  <path d="M790 636 l24 -47 27 47 h-15 l20 39 h-66 l20 -39z"></path>
+                  <path d="M968 484 l24 -47 26 47 h-15 l21 39 h-66 l20 -39z"></path>
+                  <path d="M1019 517 l20 -39 22 39 h-12 l17 35 h-55 l16 -35z"></path>
+                </g>
+                <g fill="#745334" opacity="0.82">
+                  <ellipse cx="595" cy="795" rx="100" ry="42"></ellipse>
+                  <ellipse cx="936" cy="728" rx="88" ry="35"></ellipse>
+                  <ellipse cx="711" cy="234" rx="74" ry="30"></ellipse>
+                </g>
+              </g>
+
+              <g id="layer-roads" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M306 574 C412 520 514 481 602 469 C723 453 795 393 897 351 C981 316 1051 333 1115 371" stroke="#f6d88f" stroke-width="14" opacity="0.78"></path>
+                <path d="M306 574 C412 520 514 481 602 469 C723 453 795 393 897 351 C981 316 1051 333 1115 371" stroke="#8e6c45" stroke-width="5" stroke-dasharray="18 14"></path>
+                <path d="M601 469 C565 563 526 629 451 695 C397 743 333 766 277 801" stroke="#f6d88f" stroke-width="12" opacity="0.72"></path>
+                <path d="M601 469 C565 563 526 629 451 695 C397 743 333 766 277 801" stroke="#8e6c45" stroke-width="4" stroke-dasharray="16 13"></path>
+                <path d="M603 470 C683 556 743 619 803 703 C850 768 915 793 989 801" stroke="#f6d88f" stroke-width="12" opacity="0.72"></path>
+                <path d="M603 470 C683 556 743 619 803 703 C850 768 915 793 989 801" stroke="#8e6c45" stroke-width="4" stroke-dasharray="16 13"></path>
+              </g>
+
+              <g id="layer-fog" opacity="0.35">
+                <path d="M139 240 C280 194 331 277 460 246 C581 217 626 124 793 162 C954 199 1005 130 1160 193 C1269 237 1286 334 1260 429 C1196 361 1140 355 1053 372 C911 399 856 333 728 366 C592 401 543 349 407 388 C272 427 189 365 139 240Z" fill="#fff4cf"></path>
+                <path d="M185 806 C287 741 374 843 489 786 C632 715 717 816 852 787 C981 759 1052 677 1190 738 C1147 836 1041 909 891 918 C753 927 690 870 568 911 C431 957 266 902 185 806Z" fill="#fff4cf"></path>
+              </g>
+
+              <g id="layer-labels" fill="#49331f" font-family="Georgia, serif" font-weight="700">
+                <text x="292" y="552" font-size="28">Porto Cinzento</text>
+                <text x="548" y="443" font-size="30">Pedra Alta</text>
+                <text x="871" y="332" font-size="26">Véu da Bruxa</text>
+                <text x="760" y="760" font-size="27">Ruínas Solares</text>
+                <text x="243" y="392" font-size="24">Bosque Velho</text>
+                <text x="419" y="166" font-size="22">Serra Fria</text>
+                <text x="1018" y="450" font-size="21">Mata Funda</text>
+                <text x="206" y="820" font-size="20">Ilha do Corvo</text>
+              </g>
+            </g>
+
+            <image id="customMapImage" x="0" y="0" width="1400" height="980" preserveAspectRatio="xMidYMid slice" opacity="0"></image>
+          </svg>
+          <div class="marker-layer" id="markerLayer"></div>
+        </div>
+      </div>
+
+      <div class="hud">
+        <div class="legend">
+          <span><i class="dot" style="background:#2d6f75"></i>Cidade</span>
+          <span><i class="dot" style="background:#9d3f35"></i>Perigo</span>
+          <span><i class="dot" style="background:#bb8427"></i>Tesouro</span>
+          <span><i class="dot" style="background:#5c4b91"></i>Missão</span>
+          <span><i class="dot" style="background:#292929"></i>Segredo</span>
+        </div>
+
+        <article class="note" id="noteCard">
+          <div class="note-top">
+            <div>
+              <h3 id="noteTitle"></h3>
+              <div class="item-meta" id="noteMeta"></div>
+            </div>
+            <button class="close-note" id="closeNote" title="Fechar">×</button>
+          </div>
+          <p id="noteText"></p>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const stage = document.querySelector("#stage");
+    const map = document.querySelector("#map");
+    const markerLayer = document.querySelector("#markerLayer");
+    const placeList = document.querySelector("#placeList");
+    const savedMapList = document.querySelector("#savedMapList");
+    const noteCard = document.querySelector("#noteCard");
+    const noteTitle = document.querySelector("#noteTitle");
+    const noteMeta = document.querySelector("#noteMeta");
+    const noteText = document.querySelector("#noteText");
+    const panelToggle = document.querySelector("#panelToggle");
+    const mapName = document.querySelector("#mapName");
+    const mapImageInput = document.querySelector("#mapImageInput");
+    const backupInput = document.querySelector("#backupInput");
+    const mapImageStatus = document.querySelector("#mapImageStatus");
+    const saveStatus = document.querySelector("#saveStatus");
+    const customMapImage = document.querySelector("#customMapImage");
+    const placeName = document.querySelector("#placeName");
+    const placeKind = document.querySelector("#placeKind");
+    const placeNote = document.querySelector("#placeNote");
+
+    const colors = {
+      cidade: "#2d6f75",
+      perigo: "#9d3f35",
+      tesouro: "#bb8427",
+      missao: "#5c4b91",
+      segredo: "#292929"
+    };
+
+    const icons = {
+      cidade: "⌂",
+      perigo: "!",
+      tesouro: "◆",
+      missao: "✦",
+      segredo: "?"
+    };
+
+    const defaultPlaces = [
+      { id: crypto.randomUUID(), x: 306, y: 574, kind: "cidade", title: "Porto Cinzento", note: "Mercadores sussurram sobre navios sem tripulação que chegam só em noites de lua nova." },
+      { id: crypto.randomUUID(), x: 602, y: 469, kind: "cidade", title: "Pedra Alta", note: "A fortaleza controla a ponte velha. O capitão local está comprando mapas de túneis antigos." },
+      { id: crypto.randomUUID(), x: 905, y: 351, kind: "perigo", title: "Véu da Bruxa", note: "A névoa muda as trilhas de lugar. Testes de Sobrevivência ficam mais difíceis após o pôr do sol." },
+      { id: crypto.randomUUID(), x: 820, y: 720, kind: "tesouro", title: "Ruínas Solares", note: "Um mosaico quebrado aponta para uma câmara que só abre ao meio-dia." },
+      { id: crypto.randomUUID(), x: 277, y: 801, kind: "missao", title: "Ilha do Corvo", note: "Uma carta selada pede escolta até o farol abandonado. O pagamento é bom demais." }
+    ];
+
+    let state = loadInitialState();
+    let mode = "move";
+    let pointer = null;
+    let view = { x: 0, y: 0, scale: 0.82 };
+
+    function freshDefaultPlaces() {
+      return defaultPlaces.map(place => ({ ...place, id: crypto.randomUUID() }));
+    }
+
+    function emptyMap() {
+      return {
+        id: null,
+        name: "Mapa de Campanha",
+        image: null,
+        imageName: "Mapa padrão",
+        places: freshDefaultPlaces(),
+        savedAt: null
+      };
+    }
+
+    function savedMaps() {
+      try {
+        return JSON.parse(localStorage.getItem("atlas-rpg-maps") || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function writeSavedMaps(items) {
+      localStorage.setItem("atlas-rpg-maps", JSON.stringify(items.slice(0, 20)));
+    }
+
+    function normalizeMap(raw) {
+      const base = emptyMap();
+      return {
+        ...base,
+        ...raw,
+        name: (raw?.name || base.name).trim() || base.name,
+        imageName: raw?.imageName || (raw?.image ? "Mapa importado" : "Mapa padrão"),
+        places: Array.isArray(raw?.places) && raw.places.length
+          ? raw.places.map(place => ({ ...place, id: place.id || crypto.randomUUID() }))
+          : freshDefaultPlaces()
+      };
+    }
+
+    function loadInitialState() {
+      const activeId = localStorage.getItem("atlas-rpg-active-map");
+      const found = savedMaps().find(item => item.id === activeId);
+      if (found) return normalizeMap(found);
+
+      try {
+        const draft = JSON.parse(localStorage.getItem("atlas-rpg-draft") || "null");
+        if (draft) return normalizeMap(draft);
+      } catch {
+        return emptyMap();
+      }
+
+      return emptyMap();
+    }
+
+    function persistDraft() {
+      if (state.id) {
+        updateActiveMap();
+        return;
+      }
+      localStorage.setItem("atlas-rpg-draft", JSON.stringify(state));
+    }
+
+    function updateActiveMap() {
+      if (!state.id) return;
+      const items = savedMaps();
+      const index = items.findIndex(item => item.id === state.id);
+      if (index === -1) return;
+      state.savedAt = new Date().toISOString();
+      items[index] = normalizeMap(state);
+      writeSavedMaps(items);
+      localStorage.setItem("atlas-rpg-active-map", state.id);
+      renderSavedMaps();
+      saveStatus.textContent = "Alterações salvas neste mapa.";
+    }
+
+    function saveMap({ asCopy = false } = {}) {
+      const items = savedMaps();
+      const name = mapName.value.trim() || "Mapa sem nome";
+      const now = new Date().toISOString();
+      const shouldCreate = asCopy || !state.id;
+      const next = normalizeMap({
+        ...state,
+        id: shouldCreate ? crypto.randomUUID() : state.id,
+        name,
+        savedAt: now
+      });
+
+      const index = items.findIndex(item => item.id === next.id);
+      if (index >= 0) items[index] = next;
+      else items.unshift(next);
+
+      state = next;
+      writeSavedMaps(items);
+      localStorage.setItem("atlas-rpg-active-map", state.id);
+      localStorage.removeItem("atlas-rpg-draft");
+      saveStatus.textContent = asCopy ? "Cópia salva e aberta." : "Mapa salvo.";
+      renderAll();
+      return state;
+    }
+
+    function loadMap(id) {
+      const item = savedMaps().find(saved => saved.id === id);
+      if (!item) return;
+      state = normalizeMap(item);
+      localStorage.setItem("atlas-rpg-active-map", state.id);
+      renderAll();
+      openNote(state.places[0]);
+      setPanel(false);
+      saveStatus.textContent = "Mapa carregado.";
+    }
+
+    function deleteMap(id) {
+      const items = savedMaps().filter(item => item.id !== id);
+      writeSavedMaps(items);
+      if (state.id === id) {
+        state = emptyMap();
+        localStorage.removeItem("atlas-rpg-active-map");
+        persistDraft();
+      }
+      renderAll();
+      if (state.places[0]) openNote(state.places[0]);
+    }
+
+    function newDefaultMap() {
+      state = emptyMap();
+      localStorage.removeItem("atlas-rpg-active-map");
+      persistDraft();
+      renderAll();
+      openNote(state.places[0]);
+      saveStatus.textContent = "Novo mapa padrão criado.";
+    }
+
+    function applyImage() {
+      if (state.image) {
+        customMapImage.setAttribute("href", state.image);
+        customMapImage.style.opacity = "1";
+        mapImageStatus.textContent = state.imageName || "Mapa importado";
+      } else {
+        customMapImage.removeAttribute("href");
+        customMapImage.style.opacity = "0";
+        mapImageStatus.textContent = "Mapa padrão";
+      }
+    }
+
+    function fitImageToMap(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = 1400;
+          canvas.height = 980;
+          const context = canvas.getContext("2d");
+          context.fillStyle = "#f1dfac";
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          const scale = Math.max(canvas.width / image.width, canvas.height / image.height);
+          const width = image.width * scale;
+          const height = image.height * scale;
+          context.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+          URL.revokeObjectURL(url);
+          resolve(canvas.toDataURL("image/jpeg", 0.86));
+        };
+        image.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Imagem inválida"));
+        };
+        image.src = url;
+      });
+    }
+
+    function addPlace(point) {
+      const place = {
+        id: crypto.randomUUID(),
+        x: point.x,
+        y: point.y,
+        kind: placeKind.value,
+        title: placeName.value.trim() || "Lugar misterioso",
+        note: placeNote.value.trim() || "Sem nota ainda."
+      };
+      state.places.push(place);
+      persistDraft();
+      renderAll();
+      openNote(place);
+      setPanel(false);
+    }
+
+    function deletePlace(id) {
+      state.places = state.places.filter(place => place.id !== id);
+      persistDraft();
+      renderAll();
+      const next = state.places[0];
+      if (next) openNote(next);
+      else noteCard.classList.remove("open");
+    }
+
+    function openNote(place) {
+      if (!place) return;
+      state.selectedPlace = place.id;
+      noteTitle.textContent = place.title;
+      noteMeta.textContent = `${labelFor(place.kind)} · x ${Math.round(place.x)}, y ${Math.round(place.y)}`;
+      noteText.textContent = place.note;
+      noteCard.classList.add("open");
+      renderMarkers();
+    }
+
+    function labelFor(kind) {
+      return {
+        cidade: "Cidade",
+        perigo: "Perigo",
+        tesouro: "Tesouro",
+        missao: "Missão",
+        segredo: "Segredo"
+      }[kind] || "Local";
+    }
+
+    function renderMarkers() {
+      markerLayer.innerHTML = "";
+      for (const place of state.places) {
+        const marker = document.createElement("button");
+        marker.className = `marker${place.id === state.selectedPlace ? " selected" : ""}`;
+        marker.style.left = `${place.x}px`;
+        marker.style.top = `${place.y}px`;
+        marker.style.background = colors[place.kind] || colors.segredo;
+        marker.title = place.title;
+        marker.innerHTML = `<span>${icons[place.kind] || "?"}</span>`;
+        marker.addEventListener("click", event => {
+          event.stopPropagation();
+          openNote(place);
+        });
+        markerLayer.appendChild(marker);
+      }
+    }
+
+    function renderPlaces() {
+      placeList.innerHTML = "";
+      if (!state.places.length) {
+        const empty = document.createElement("div");
+        empty.className = "status";
+        empty.textContent = "Nenhum local neste mapa.";
+        placeList.appendChild(empty);
+        return;
+      }
+      for (const place of state.places) {
+        const item = document.createElement("div");
+        item.className = "place-item";
+        item.innerHTML = `
+          <i class="swatch" style="background:${colors[place.kind] || colors.segredo}"></i>
+          <div>
+            <div class="item-title">${escapeHtml(place.title)}</div>
+            <div class="item-meta">${labelFor(place.kind)}</div>
+          </div>
+          <button class="mini-btn danger" title="Apagar local">×</button>
+        `;
+        item.addEventListener("click", () => openNote(place));
+        item.querySelector("button").addEventListener("click", event => {
+          event.stopPropagation();
+          deletePlace(place.id);
+        });
+        placeList.appendChild(item);
+      }
+    }
+
+    function renderSavedMaps() {
+      const maps = savedMaps();
+      savedMapList.innerHTML = "";
+      if (!maps.length) {
+        const empty = document.createElement("div");
+        empty.className = "status";
+        empty.textContent = "Nenhum mapa salvo ainda.";
+        savedMapList.appendChild(empty);
+        return;
+      }
+      for (const saved of maps) {
+        const item = normalizeMap(saved);
+        const date = item.savedAt ? new Date(item.savedAt) : null;
+        const dateLabel = date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString("pt-BR") : "salvo";
+        const row = document.createElement("div");
+        row.className = `save-item${item.id === state.id ? " active" : ""}`;
+        row.innerHTML = `
+          <div>
+            <div class="item-title">${escapeHtml(item.name)}</div>
+            <div class="item-meta">${dateLabel} · ${item.places.length} locais</div>
+          </div>
+          <button class="mini-btn" title="Carregar">↺</button>
+          <button class="mini-btn" title="Exportar">⇩</button>
+          <button class="mini-btn danger" title="Apagar">×</button>
+        `;
+        const buttons = row.querySelectorAll("button");
+        buttons[0].addEventListener("click", () => loadMap(item.id));
+        buttons[1].addEventListener("click", () => exportMap(item));
+        buttons[2].addEventListener("click", () => deleteMap(item.id));
+        savedMapList.appendChild(row);
+      }
+    }
+
+    function renderAll() {
+      mapName.value = state.name;
+      applyImage();
+      renderMarkers();
+      renderPlaces();
+      renderSavedMaps();
+    }
+
+    function exportMap(mapData = state) {
+      const payload = JSON.stringify(normalizeMap(mapData), null, 2);
+      const blob = new Blob([payload], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const safeName = (mapData.name || "mapa-rpg").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      link.href = url;
+      link.download = `${safeName || "mapa-rpg"}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      saveStatus.textContent = "Backup exportado.";
+    }
+
+    function importBackup(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = normalizeMap(JSON.parse(reader.result));
+          imported.id = imported.id || crypto.randomUUID();
+          imported.savedAt = new Date().toISOString();
+          const items = savedMaps().filter(item => item.id !== imported.id);
+          items.unshift(imported);
+          writeSavedMaps(items);
+          state = imported;
+          localStorage.setItem("atlas-rpg-active-map", state.id);
+          renderAll();
+          openNote(state.places[0]);
+          saveStatus.textContent = "Backup importado e aberto.";
+        } catch {
+          saveStatus.textContent = "Backup inválido.";
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function isMobile() {
+      return window.matchMedia("(max-width: 860px)").matches;
+    }
+
+    function setPanel(open) {
+      document.body.classList.toggle("panel-open", open);
+      panelToggle.title = open ? "Fechar painel" : "Abrir painel";
+      panelToggle.setAttribute("aria-label", panelToggle.title);
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      stage.classList.toggle("adding", mode === "add");
+      document.querySelector("#moveMode").classList.toggle("active", mode === "move");
+      document.querySelector("#addMode").classList.toggle("active", mode === "add");
+      if (isMobile() && mode === "add") setPanel(false);
+    }
+
+    function applyTransform() {
+      map.style.transform = `translate(calc(-50% + ${view.x}px), calc(-50% + ${view.y}px)) scale(${view.scale})`;
+    }
+
+    function fitMobileView() {
+      const scale = Math.max(0.54, Math.min(0.72, window.innerWidth / 1120));
+      view.scale = scale;
+      view.x = map.offsetWidth * (1 - scale) / 2;
+      view.y = 0;
+    }
+
+    function screenToMap(clientX, clientY) {
+      const rect = stage.getBoundingClientRect();
+      const mapLeft = rect.width / 2 + view.x;
+      const mapTop = rect.height / 2 + view.y;
+      return {
+        x: Math.max(80, Math.min(1320, (clientX - rect.left - mapLeft) / view.scale)),
+        y: Math.max(70, Math.min(920, (clientY - rect.top - mapTop) / view.scale))
+      };
+    }
+
+    function zoom(delta, centerX = stage.clientWidth / 2, centerY = stage.clientHeight / 2) {
+      const before = screenToMap(centerX + stage.getBoundingClientRect().left, centerY + stage.getBoundingClientRect().top);
+      view.scale = Math.max(0.46, Math.min(1.85, view.scale + delta));
+      const rect = stage.getBoundingClientRect();
+      const afterX = (centerX - (rect.width / 2 + view.x)) / view.scale;
+      const afterY = (centerY - (rect.height / 2 + view.y)) / view.scale;
+      view.x += (afterX - before.x) * view.scale;
+      view.y += (afterY - before.y) * view.scale;
+      applyTransform();
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    stage.addEventListener("pointerdown", event => {
+      if (event.target.closest(".marker")) return;
+      if (isMobile()) setPanel(false);
+      if (mode === "add") {
+        addPlace(screenToMap(event.clientX, event.clientY));
+        setMode("move");
+        return;
+      }
+      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, viewX: view.x, viewY: view.y };
+      stage.setPointerCapture(event.pointerId);
+      stage.classList.add("dragging");
+    });
+
+    stage.addEventListener("pointermove", event => {
+      if (!pointer || pointer.id !== event.pointerId) return;
+      view.x = pointer.viewX + event.clientX - pointer.x;
+      view.y = pointer.viewY + event.clientY - pointer.y;
+      applyTransform();
+    });
+
+    stage.addEventListener("pointerup", event => {
+      if (pointer?.id === event.pointerId) {
+        pointer = null;
+        stage.classList.remove("dragging");
+      }
+    });
+
+    stage.addEventListener("wheel", event => {
+      event.preventDefault();
+      zoom(event.deltaY > 0 ? -0.08 : 0.08, event.clientX - stage.getBoundingClientRect().left, event.clientY - stage.getBoundingClientRect().top);
+    }, { passive: false });
+
+    panelToggle.addEventListener("click", () => setPanel(!document.body.classList.contains("panel-open")));
+    document.querySelector("#moveMode").addEventListener("click", () => setMode("move"));
+    document.querySelector("#addMode").addEventListener("click", () => setMode("add"));
+    document.querySelector("#zoomIn").addEventListener("click", () => zoom(0.12));
+    document.querySelector("#zoomOut").addEventListener("click", () => zoom(-0.12));
+    document.querySelector("#quickAdd").addEventListener("click", () => {
+      const rect = stage.getBoundingClientRect();
+      addPlace(screenToMap(rect.left + rect.width / 2, rect.top + rect.height / 2));
+    });
+    document.querySelector("#closeNote").addEventListener("click", () => noteCard.classList.remove("open"));
+    document.querySelector("#saveMap").addEventListener("click", () => saveMap());
+    document.querySelector("#saveCopy").addEventListener("click", () => saveMap({ asCopy: true }));
+    document.querySelector("#exportBackup").addEventListener("click", () => exportMap());
+    document.querySelector("#newMap").addEventListener("click", newDefaultMap);
+
+    mapName.addEventListener("change", () => {
+      state.name = mapName.value.trim() || "Mapa sem nome";
+      persistDraft();
+      renderSavedMaps();
+    });
+
+    mapImageInput.addEventListener("change", async event => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      mapImageStatus.textContent = "Importando...";
+      try {
+        state.image = await fitImageToMap(file);
+        state.imageName = file.name;
+        persistDraft();
+        renderAll();
+        saveStatus.textContent = state.id ? "Imagem salva neste mapa." : "Imagem adicionada ao rascunho.";
+        setPanel(false);
+      } catch {
+        mapImageStatus.textContent = "Não foi possível importar";
+      } finally {
+        mapImageInput.value = "";
+      }
+    });
+
+    backupInput.addEventListener("change", event => {
+      const file = event.target.files?.[0];
+      if (file) importBackup(file);
+      backupInput.value = "";
+    });
+
+    document.querySelectorAll("[data-layer]").forEach(input => {
+      input.addEventListener("change", () => {
+        const layer = document.querySelector(`#layer-${input.dataset.layer}`);
+        if (layer) layer.style.display = input.checked ? "" : "none";
+      });
+    });
+
+    window.addEventListener("resize", () => {
+      if (isMobile()) fitMobileView();
+      else view = { x: 0, y: 0, scale: Math.max(view.scale, 0.82) };
+      applyTransform();
+    });
+
+    if (isMobile()) fitMobileView();
+    applyTransform();
+    renderAll();
+    openNote(state.places[0]);
+  </script>
+</body>
+</html>
